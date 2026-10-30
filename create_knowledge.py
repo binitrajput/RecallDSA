@@ -101,13 +101,13 @@ def create_knowledge(playlist_url: str, languages: list[str], reset: bool = Fals
         except (json.JSONDecodeError, OSError):
             previous = []
     previous_video_ids = {item["video_id"] for item in previous if "video_id" in item}
-    same_playlist = bool(previous_video_ids) and previous_video_ids.issubset(playlist_video_ids)
-    if not same_playlist:
-        previous = []
-        previous_video_ids = set()
+    already_indexed = previous_video_ids.intersection(playlist_video_ids)
 
     knowledge = list(previous)
-    print(f"Playlist has {len(videos)} videos; {len(previous_video_ids)} already have captions indexed.")
+    print(
+        f"Playlist has {len(videos)} videos; {len(already_indexed)} already have captions indexed. "
+        f"Keeping {len(previous)} existing chunks from the knowledge base."
+    )
     skipped = 0
     for number, video in enumerate(videos, start=1):
         if video["video_id"] in previous_video_ids:

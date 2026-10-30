@@ -16,7 +16,7 @@ Create a `.env` file with your Groq key for answer generation:
 GROQ_API_KEY=your_key_here
 ```
 
-The embedding model is `paraphrase-multilingual-MiniLM-L12-v2` (384 dimensions). Qdrant stores vectors locally under `data/qdrant`.
+The embedding model is `intfloat/multilingual-e5-small` (384 dimensions), provided locally by `fastembed`. Qdrant stores vectors locally under `data/qdrant`.
 
 ## 1. Create or update knowledge.json
 
@@ -24,7 +24,7 @@ The embedding model is `paraphrase-multilingual-MiniLM-L12-v2` (384 dimensions).
 uv run python create_knowledge.py "https://www.youtube.com/playlist?list=YOUR_PLAYLIST_ID"
 ```
 
-Captions are requested in `en-US`, then `en`, then `hi` by default. The script writes one object per chunk with `chunk_id`, `video_id`, `video_title`, timestamped `youtube_url`, start/end seconds and formatted timestamps, and the caption `text`. It resumes by skipping videos already present in `knowledge.json`; rerun it later to retry skipped videos. Pass `--reset` to replace `knowledge.json` and start over.
+Captions are requested in `en-US`, then `en`, then `hi` by default. The script writes one object per chunk with `chunk_id`, `video_id`, `video_title`, timestamped `youtube_url`, start/end seconds and formatted timestamps, and the caption `text`. It resumes by skipping videos already present in `knowledge.json` and keeps existing chunks when adding another playlist; rerun it later to retry skipped videos. Pass `--reset` to replace `knowledge.json` with the selected playlist and start over.
 
 ## 2. Create or update the vector database
 
