@@ -68,4 +68,4 @@ Open the local address printed by Vite (normally `http://localhost:5173`). The f
 
 ## Current transcript coverage
 
-The current local knowledge file contains 2,442 chunks from 53 videos. YouTube blocked caption requests for many playlist entries during collection, so confirm transcript coverage before relying on the search results for the full playlist.
+The current knowledge file contains 6,719 chunks from 140 videos across the existing playlist and the Strivers A2Z DSA playlist. YouTube blocked caption requests during collection, so rerun `create_knowledge.py` with the playlist URL later to retry the remaining videos; already indexed videos are skipped.
