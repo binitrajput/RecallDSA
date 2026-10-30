@@ -1,49 +1,102 @@
-# Playlist transcript search
+# RecallDSA
 
-The workflow is split into three steps: create timestamped caption chunks, create their vector index, then search that index and answer with timestamped video links.
+Search DSA lessons from **Striver** and **Padho with Pratyush** in English or Hinglish. RecallDSA finds useful transcript moments and lets you jump straight to the matching video timestamp.
 
-## Setup
+<p align="center">
+  <img src="frontend/src/assets/RecallDSA%20Searchable%20Video%20Hero.png" alt="RecallDSA searchable video interface" width="100%" />
+</p>
 
-From this folder, install dependencies:
+## What it does
 
-```powershell
+- Search indexed playlist captions with a natural-language question.
+- Get a short answer grounded in transcript excerpts, with video sources and timestamps.
+- Play a suggested video from the matching moment.
+- Search in English or Hinglish.
+- Add playlists to the knowledge base while keeping already indexed transcripts.
+
+## Quick start
+
+### Requirements
+
+- Python 3.11 or later
+- [uv](https://docs.astral.sh/uv/)
+- Node.js and npm
+- A Groq API key
+
+### 1. Install dependencies
+
+From the repository root:
+
+```bash
 uv sync
 ```
 
-Create a `.env` file with your Groq key for answer generation:
+Create a `.env` file in the repository root:
 
-```text
-GROQ_API_KEY=your_key_here
+```dotenv
+GROQ_API_KEY=your_groq_api_key
+QDRANT_MODE=local
 ```
 
-The embedding model is `intfloat/multilingual-e5-small` (384 dimensions), provided locally by `fastembed`. Qdrant stores vectors locally under `data/qdrant`.
+Qdrant uses a local database under `data/qdrant` by default. Keep API keys in `.env`; do not put them in frontend environment variables or commit them.
 
-## 1. Create or update knowledge.json
+### 2. Build the local vector index
 
-```powershell
-uv run python create_knowledge.py "https://www.youtube.com/playlist?list=YOUR_PLAYLIST_ID"
-```
+The repository includes transcript chunks in `knowledge.json`. Index them into the local Qdrant database:
 
-Captions are requested in `en-US`, then `en`, then `hi` by default. The script writes one object per chunk with `chunk_id`, `video_id`, `video_title`, timestamped `youtube_url`, start/end seconds and formatted timestamps, and the caption `text`. It resumes by skipping videos already present in `knowledge.json` and keeps existing chunks when adding another playlist; rerun it later to retry skipped videos. Pass `--reset` to replace `knowledge.json` with the selected playlist and start over.
-
-## 2. Create or update the vector database
-
-```powershell
+```bash
 uv run python create_vector_db.py
 ```
 
-This reads `knowledge.json`, embeds each chunk, and stores the vectors and metadata in Qdrant. It adds missing chunks and rebuilds if it detects stale chunks. Use `--rebuild` to recreate the collection.
+The first run downloads the embedding model used by FastEmbed and creates the vector index. Later runs add missing chunks. To recreate the collection from scratch, use `--rebuild`.
 
-## 3. Search and answer
+### 3. Start the backend
 
-```powershell
-uv run python rag_prj.py "Where does the speaker explain binary search?"
+In one terminal, from the repository root:
+
+```bash
+uv run uvicorn api:app --reload
 ```
 
-`rag_prj.py` embeds the query, searches Qdrant using cosine similarity, sends the closest captions to Groq, and prints the answer with video links and timestamps.
+The API runs at `http://127.0.0.1:8000`; interactive API docs are at `http://127.0.0.1:8000/docs`.
 
-Videos without accessible captions are skipped; this project does not transcribe audio when captions are missing.
+### 4. Start the frontend
 
-## Website deployment
+In a second terminal:
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for the Render API, Vercel frontend, and Qdrant Cloud setup.
+```bash
+cd frontend
+npm ci
+npm run dev
+```
+
+Open the Vite URL, usually `http://localhost:5173`.
+
+## Add another playlist
+
+Collect captions from a public YouTube playlist, then update the vector index:
+
+```bash
+uv run python create_knowledge.py "https://www.youtube.com/playlist?list=YOUR_PLAYLIST_ID"
+uv run python create_vector_db.py
+```
+
+The collector keeps existing knowledge and skips videos already indexed. If YouTube blocks caption requests, rerun the same command later to retry videos that are still missing. Videos without accessible captions are skipped; RecallDSA does not transcribe audio. Use `--reset` only when you want to replace the knowledge file with the selected playlist.
+
+## How search works
+
+1. `create_knowledge.py` turns playlist captions into timestamped transcript chunks in `knowledge.json`.
+2. `create_vector_db.py` embeds each chunk with `intfloat/multilingual-e5-small` and stores vectors and metadata in Qdrant.
+3. The FastAPI backend retrieves relevant captions and asks Groq to answer using that context.
+4. The frontend shows the answer and source videos; selecting a source opens the video at its timestamp.
+
+## Deploy
+
+For the Render API, Vercel frontend, and Qdrant Cloud setup, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+## Stack
+
+**Frontend:** Vite, JavaScript, CSS  
+**API:** FastAPI, Groq  
+**Retrieval:** Qdrant, FastEmbed, multilingual E5 embeddings  
+**Transcript collection:** yt-dlp, YouTube Transcript API
