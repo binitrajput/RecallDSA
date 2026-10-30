@@ -3,26 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f5f6fa" />
+    <meta name="theme-color" content="#f6f7ff" />
     <meta name="description" content="Search playlist transcripts and jump to the video moment that answers your question." />
-    <title>PlaylistIndex — Find the moment</title>
+    <title>RecallDSA — Find the moment</title>
   </head>
   <body>
     <main class="page-shell">
       <header class="topbar">
-        <a class="brand" href="/" aria-label="PlaylistIndex home">
-          <span class="brand-mark" aria-hidden="true">P</span>
-          <span>Playlist<span class="brand-light">Index</span></span>
+        <a class="brand" href="/" aria-label="RecallDSA home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6.5 4.8v14.4L19 12 6.5 4.8Z" />
+              <text x="10.4" y="14.6">R</text>
+            </svg>
+          </span>
+          <span>Recall<span class="brand-light">DSA</span></span>
         </a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="#ask-form">Search</a>
+          <a href="#player-panel">Video player</a>
+        </nav>
         <span class="top-note"><span class="status-dot" aria-hidden="true"></span> Transcript search</span>
       </header>
 
       <div class="main-layout">
         <section class="left-panel" aria-label="Search video library">
           <section class="hero" aria-labelledby="page-title">
-            <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> YOUR VIDEO LIBRARY, SEARCHED</p>
+            <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> STRIVER’S + PADHO WITH PRATYUSH, SEARCHABLE</p>
             <h1 id="page-title">Find the moment<br />that <span>matters.</span></h1>
-            <p class="intro">Describe a concept or question. Get the video and timestamp where it appears.</p>
+            <p class="intro">Ask in English or Hinglish. Jump to the exact second it’s explained.</p>
 
             <form id="ask-form" class="search-card">
               <label for="statement">What are you looking for?</label>
@@ -72,13 +81,6 @@
         </aside>
       </div>
     </main>
-    <footer class="site-footer">
-      <span>Built by Sunculp Shukla</span>
-      <span class="footer-separator" aria-hidden="true">·</span>
-      <a href="https://www.linkedin.com/in/sunculp-shukla-2640232a1/" target="_blank" rel="noopener noreferrer" aria-label="Visit Sunculp Shukla on LinkedIn">
-        <svg class="linkedin-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.85-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.353V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-      </a>
-    </footer>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
